@@ -16,15 +16,18 @@ if __name__ == '__main__':
     number = int(sys.argv[2])
     delimiter = ' '
 
-    page_numbers = int(ceil(number/25.0))
+    page_numbers = int(ceil(number/50.0))
 
     for page_num in range(0, page_numbers): 
+        print "Getting URL:" + BASE_URL % (page_num, country_code)
         response = requests.get(BASE_URL % (page_num, country_code))  
     
-        soup = BeautifulSoup(response.text)
-        bullets = soup.find_all('li', {'class':'site-listing'})
+        soup = BeautifulSoup(response.text, "html.parser")
+        bullets = soup.find_all('div', {'class':'tr site-listing'})
     
         for bullet in bullets:
+            acell = bullet.find('div', {'class':'td DescriptionCell'})
             rank = bullet.div.contents[0]
-            site = bullet.h2.a.contents[0]
+            site = acell.p.a.contents[0]
             print('%s%s%s' % (rank, delimiter, site))
+            
